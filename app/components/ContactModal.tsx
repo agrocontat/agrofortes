@@ -1,12 +1,26 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { X, Send, CheckCircle, AlertCircle, Loader2 } from "lucide-react";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { X, Send, CheckCircle, AlertCircle, Loader2, RefreshCw } from "lucide-react";
 import { sendContactEmail } from "@/app/actions/sendEmail";
 
 interface ContactModalProps {
   isOpen: boolean;
   onClose: () => void;
+}
+
+interface Captcha {
+  num1: number;
+  num2: number;
+  answer: string;
+}
+
+function generateCaptcha(): Captcha {
+  return {
+    num1: Math.floor(Math.random() * 9) + 1,
+    num2: Math.floor(Math.random() * 9) + 1,
+    answer: "",
+  };
 }
 
 const assuntos = [
@@ -21,6 +35,8 @@ const assuntos = [
 
 export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [captchaError, setCaptchaError] = useState("");
+  const [captcha, setCaptcha] = useState<Captcha>(generateCaptcha);
   const [form, setForm] = useState({
     nome: "",
     telefone: "",
@@ -30,7 +46,12 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
   });
   const firstInputRef = useRef<HTMLInputElement>(null);
 
-  // Foca o primeiro campo ao abrir; bloqueia scroll do body
+  const resetCaptcha = useCallback(() => {
+    setCaptcha({ ...generateCaptcha(), answer: "" });
+    setCaptchaError("");
+  }, []);
+
+  // Bloqueia scroll do body e foca o primeiro campo ao abrir
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
@@ -56,13 +77,26 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setCaptchaError("");
+
+    // Validação do captcha
+    const expected = captcha.num1 + captcha.num2;
+    if (parseInt(captcha.answer) !== expected) {
+      setCaptchaError("Resposta incorreta. Tente novamente.");
+      resetCaptcha();
+      return;
+    }
+
     setStatus("loading");
     const result = await sendContactEmail(form);
+
     if (result.success) {
       setStatus("success");
       setForm({ nome: "", telefone: "", email: "", assunto: "", mensagem: "" });
+      resetCaptcha();
     } else {
       setStatus("error");
+      resetCaptcha();
     }
   };
 
@@ -130,7 +164,9 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
               {status === "error" && (
                 <div className="flex items-center gap-3 bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
                   <AlertCircle size={16} className="shrink-0" />
-                  <span>Não foi possível enviar. Tente novamente ou ligue para (35) 9 9810-5327.</span>
+                  <span>
+                    Não foi possível enviar. Tente novamente ou ligue para (35) 9 9810-5327.
+                  </span>
                 </div>
               )}
 
@@ -216,6 +252,49 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                   placeholder="Conte brevemente sobre o que você precisa..."
                   className="w-full border border-forest/15 focus:border-gold focus:outline-none px-4 py-3 font-sans text-sm text-forest placeholder:text-forest/30 transition-colors resize-none bg-cream-light"
                 />
+              </div>
+
+              {/* Captcha */}
+              <div>
+                <label className="block font-sans text-xs font-semibold text-forest/60 uppercase tracking-widest mb-1.5">
+                  Verificação de segurança <span className="text-gold">*</span>
+                </label>
+                <div className="flex items-center gap-3">
+                  {/* Caixa da pergunta */}
+                  <div className="flex items-center gap-2 bg-forest px-5 py-3 shrink-0">
+                    <span className="font-sans text-white font-semibold text-sm tracking-wide">
+                      {captcha.num1} + {captcha.num2} =
+                    </span>
+                  </div>
+                  {/* Campo de resposta */}
+                  <input
+                    type="number"
+                    value={captcha.answer}
+                    onChange={(e) =>
+                      setCaptcha((prev) => ({ ...prev, answer: e.target.value }))
+                    }
+                    required
+                    placeholder="?"
+                    min="0"
+                    max="99"
+                    className="w-20 border border-forest/15 focus:border-gold focus:outline-none px-4 py-3 font-sans text-sm text-forest text-center placeholder:text-forest/30 transition-colors bg-cream-light [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  />
+                  {/* Botão refresh */}
+                  <button
+                    type="button"
+                    onClick={resetCaptcha}
+                    className="p-2 text-forest/40 hover:text-gold transition-colors"
+                    title="Gerar nova pergunta"
+                  >
+                    <RefreshCw size={16} />
+                  </button>
+                  {/* Erro inline */}
+                  {captchaError && (
+                    <span className="font-sans text-xs text-red-600">
+                      {captchaError}
+                    </span>
+                  )}
+                </div>
               </div>
 
               {/* Submit */}

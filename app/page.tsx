@@ -141,10 +141,10 @@ function Navbar({ onConsultarClick }: { onConsultarClick: () => void }) {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 bg-forest ${
         scrolled
-          ? "bg-forest/98 backdrop-blur-md shadow-lg py-3"
-          : "bg-transparent py-5"
+          ? "shadow-lg shadow-black/30 py-3"
+          : "py-5"
       }`}
     >
       <div className="max-w-7xl mx-auto px-6 lg:px-10 flex items-center justify-between">
