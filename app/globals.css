@@ -1,0 +1,32 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-playfair: "Playfair Display", Georgia, serif;
+  --font-inter: "Inter", system-ui, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply font-sans text-forest antialiased;
+}
+
+/* Custom thin gold divider */
+.gold-divider {
+  height: 1px;
+  background: linear-gradient(to right, transparent, #B8963E, transparent);
+}
+
+/* Elegant section padding */
+.section-padding {
+  @apply py-24 px-6 lg:px-16;
+}
+
+/* Navbar smooth scroll offset */
+section {
+  scroll-margin-top: 80px;
+}
