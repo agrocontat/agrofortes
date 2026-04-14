@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useState, useEffect } from "react";
+import ContactModal from "@/app/components/ContactModal";
 import {
   Leaf,
   ShieldCheck,
@@ -122,7 +123,7 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 
 // ─── Navbar ───────────────────────────────────────────────────────────────────
 
-function Navbar() {
+function Navbar({ onConsultarClick }: { onConsultarClick: () => void }) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -186,7 +187,7 @@ function Navbar() {
         {/* CTA */}
         <div className="hidden lg:flex items-center gap-4">
           <button
-            onClick={() => scrollTo("#contato")}
+            onClick={onConsultarClick}
             className="font-sans text-sm font-medium px-6 py-2.5 border border-gold text-gold hover:bg-gold hover:text-forest transition-all duration-300 tracking-wide"
           >
             Consultar
@@ -216,7 +217,7 @@ function Navbar() {
             </button>
           ))}
           <button
-            onClick={() => scrollTo("#contato")}
+            onClick={onConsultarClick}
             className="mt-2 font-sans text-sm font-medium px-6 py-3 border border-gold text-gold hover:bg-gold hover:text-forest transition-all duration-300 tracking-wide text-center"
           >
             Consultar
@@ -229,7 +230,7 @@ function Navbar() {
 
 // ─── Hero ─────────────────────────────────────────────────────────────────────
 
-function HeroSection() {
+function HeroSection({ onConsultarClick }: { onConsultarClick: () => void }) {
   return (
     <section
       id="home"
@@ -279,11 +280,7 @@ function HeroSection() {
           {/* CTAs */}
           <div className="flex flex-col sm:flex-row gap-4">
             <button
-              onClick={() => {
-                document
-                  .querySelector("#contato")
-                  ?.scrollIntoView({ behavior: "smooth" });
-              }}
+              onClick={onConsultarClick}
               className="group inline-flex items-center gap-3 bg-gold hover:bg-gold-light text-forest font-sans font-semibold text-sm tracking-wide px-8 py-4 transition-all duration-300 shadow-lg shadow-gold/20"
             >
               Fale com um Especialista
@@ -319,7 +316,7 @@ function HeroSection() {
 
 // ─── About / Qualidade ────────────────────────────────────────────────────────
 
-function AboutSection() {
+function AboutSection({ onConsultarClick }: { onConsultarClick: () => void }) {
   return (
     <section id="sobre" className="bg-cream-light py-28 px-6 lg:px-16">
       <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
@@ -385,11 +382,7 @@ function AboutSection() {
           </ul>
 
           <button
-            onClick={() => {
-              document
-                .querySelector("#contato")
-                ?.scrollIntoView({ behavior: "smooth" });
-            }}
+            onClick={onConsultarClick}
             className="group inline-flex items-center gap-3 text-gold font-sans font-medium text-sm tracking-wide border-b border-gold/40 pb-0.5 hover:border-gold transition-colors"
           >
             Consultar agora
@@ -444,7 +437,7 @@ function VantagensSection() {
 
 // ─── Services ─────────────────────────────────────────────────────────────────
 
-function ServicesSection() {
+function ServicesSection({ onConsultarClick }: { onConsultarClick: () => void }) {
   return (
     <section id="solucoes" className="bg-cream py-28 px-6 lg:px-16">
       <div className="max-w-7xl mx-auto">
@@ -499,11 +492,7 @@ function ServicesSection() {
             "Nós cuidamos de tudo para você."
           </p>
           <button
-            onClick={() => {
-              document
-                .querySelector("#contato")
-                ?.scrollIntoView({ behavior: "smooth" });
-            }}
+            onClick={onConsultarClick}
             className="group shrink-0 inline-flex items-center gap-3 bg-forest hover:bg-forest-light text-white font-sans font-medium text-sm tracking-wide px-8 py-4 transition-colors duration-300"
           >
             Fale Conosco
@@ -520,7 +509,7 @@ function ServicesSection() {
 
 // ─── CTA Banner ───────────────────────────────────────────────────────────────
 
-function CtaBanner() {
+function CtaBanner({ onConsultarClick }: { onConsultarClick: () => void }) {
   return (
     <section className="relative py-28 px-6 lg:px-16 overflow-hidden">
       <Image
@@ -552,11 +541,7 @@ function CtaBanner() {
           competitivas.
         </p>
         <button
-          onClick={() => {
-            document
-              .querySelector("#contato")
-              ?.scrollIntoView({ behavior: "smooth" });
-          }}
+          onClick={onConsultarClick}
           className="group inline-flex items-center gap-3 bg-gold hover:bg-gold-light text-forest font-sans font-semibold text-sm tracking-wide px-10 py-4 transition-all duration-300 shadow-xl shadow-black/30"
         >
           Consultar Gratuitamente
@@ -683,14 +668,17 @@ function Footer() {
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function Home() {
+  const [modalOpen, setModalOpen] = useState(false);
+
   return (
     <main>
-      <Navbar />
-      <HeroSection />
-      <AboutSection />
+      <ContactModal isOpen={modalOpen} onClose={() => setModalOpen(false)} />
+      <Navbar onConsultarClick={() => setModalOpen(true)} />
+      <HeroSection onConsultarClick={() => setModalOpen(true)} />
+      <AboutSection onConsultarClick={() => setModalOpen(true)} />
       <VantagensSection />
-      <ServicesSection />
-      <CtaBanner />
+      <ServicesSection onConsultarClick={() => setModalOpen(true)} />
+      <CtaBanner onConsultarClick={() => setModalOpen(true)} />
       <Footer />
     </main>
   );
