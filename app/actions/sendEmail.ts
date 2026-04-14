@@ -15,7 +15,7 @@ export interface ContactFormData {
 export async function sendContactEmail(data: ContactFormData) {
   try {
     await resend.emails.send({
-      from: "Agrofortes Site <onboarding@resend.dev>",
+      from: "Agrofortes Site <no-reply@agrofortes.com.br>",
       to: ["contato@agrofortes.com.br"],
       replyTo: data.email,
       subject: `[Contato Site] ${data.assunto}`,
