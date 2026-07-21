@@ -622,9 +622,7 @@ function Footer() {
             <li className="flex items-start gap-3">
               <MapPin size={16} className="text-gold mt-0.5 shrink-0" />
               <span className="font-sans text-white/55 text-sm leading-relaxed">
-                Av. Celina Ferreira Ottoni, 760 – Rezende
-                <br />
-                Varginha – MG, 37062-170
+                Varginha – MG
               </span>
             </li>
             <li className="flex items-center gap-3">
